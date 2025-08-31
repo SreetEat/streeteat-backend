@@ -1,16 +1,15 @@
-package com.streeteats.admin;
+package com.streeteat.streeteat.order;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
-@RequestMapping("/api/admin")
-public class AdminController {
+@RequestMapping("/api/order")
+public class OrderController {
 
     @GetMapping("/health")
     public String healthCheck() {
-        return "Admin Module is up!";
+        return "Order Service is up!";
     }
 }
