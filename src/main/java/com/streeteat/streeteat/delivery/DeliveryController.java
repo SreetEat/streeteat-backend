@@ -1,4 +1,4 @@
-package com.streeteats.delivery;
+package com.streeteat.streeteat.delivery;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
