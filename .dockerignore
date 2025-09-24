@@ -1,0 +1,47 @@
+# Maven build outputs
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+*.log
+logs/
+*.out
+
+# IDE settings
+*.iml
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Git & CI/CD
+.git
+.gitignore
+.gitattributes
+.github/
+.gitlab-ci.yml
+
+# Docker
+docker-compose.override.yml
+Dockerfile.*
+
+# Node / Frontend (if added later)
+node_modules/
+dist/
+build/
+.npm/
+
+# Coverage / Reports
+coverage/
+reports/
+test-output/
+*.jacoco*
+
+# Temporary files
+*.tmp
+*.bak
+*.old
