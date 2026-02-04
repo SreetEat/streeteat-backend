@@ -31,13 +31,46 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()   // public APIs
-                        .anyRequest().authenticated()              // all others need JWT
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+                .authorizeHttpRequests(auth -> auth
+                        // -------- PUBLIC ENDPOINTS --------
+                        .requestMatchers(
+                                "/auth/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/actuator/health"
+                        ).permitAll()
+
+                        // -------- ADMIN --------
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
+
+                        // -------- VENDOR --------
+                        .requestMatchers(
+                                "/api/vendor/**",
+                                "/api/menu/**",
+                                "/api/orders/vendor/**"
+                        ).hasRole("VENDOR")
+
+                        // -------- CUSTOMER / ORDER --------
+                        .requestMatchers("/api/orders/**")
+                        .hasAnyRole("CUSTOMER", "VENDOR", "ADMIN")
+
+                        // -------- DELIVERY PARTNER --------
+                        .requestMatchers("/api/delivery/**")
+                        .hasAnyRole("DELIVERY_PARTNER", "ADMIN")
+
+                        // -------- EVERYTHING ELSE --------
+                        .anyRequest().authenticated()
+                )
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                .authenticationProvider(authenticationProvider())
+
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
