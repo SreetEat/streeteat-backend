@@ -1,0 +1,43 @@
+<configuration>
+
+    <!-- Path for log files -->
+    <property name="LOG_PATH" value="logs"/>
+
+    <!-- ===== Console Appender ===== -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Pattern: timestamp, thread, log level, class, message -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ===== File Appender (Rolling Daily) ===== -->
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/streeteat.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Daily rolling -->
+            <fileNamePattern>${LOG_PATH}/streeteat-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ===== Root Logger ===== -->
+    <root level="INFO">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+    </root>
+
+    <!-- ===== Development Override (DEBUG) ===== -->
+    <springProfile name="dev">
+        <logger name="com.streeteat" level="DEBUG"/>
+    </springProfile>
+
+    <!-- ===== Production Override (INFO) ===== -->
+    <springProfile name="prod">
+        <logger name="com.streeteat" level="INFO"/>
+    </springProfile>
+
+</configuration>
