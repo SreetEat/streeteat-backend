@@ -1,0 +1,61 @@
+-- ================================================
+-- V3__sample_orders.sql
+-- Inserts 50 realistic test orders
+-- ================================================
+
+INSERT INTO orders (user_id, vendor_id, delivery_partner_id, status, created_at, updated_at)
+VALUES
+    (1, 1, 1, 'PENDING', NOW() - INTERVAL '1 DAY', NOW() - INTERVAL '1 DAY'),
+    (2, 2, 2, 'DELIVERED', NOW() - INTERVAL '2 DAYS', NOW() - INTERVAL '2 DAYS'),
+    (3, 1, NULL, 'PENDING', NOW() - INTERVAL '3 DAYS', NOW() - INTERVAL '3 DAYS'),
+    (1, 2, 1, 'ASSIGNED', NOW() - INTERVAL '4 DAYS', NOW() - INTERVAL '4 DAYS'),
+    (2, 1, 2, 'DELIVERED', NOW() - INTERVAL '5 DAYS', NOW() - INTERVAL '5 DAYS'),
+
+    (3, 2, 1, 'CANCELLED', NOW() - INTERVAL '6 DAYS', NOW() - INTERVAL '6 DAYS'),
+    (1, 1, 1, 'DELIVERED', NOW() - INTERVAL '7 DAYS', NOW() - INTERVAL '7 DAYS'),
+    (2, 2, NULL, 'PENDING', NOW() - INTERVAL '1 DAY', NOW() - INTERVAL '1 DAY'),
+    (3, 1, 2, 'ASSIGNED', NOW() - INTERVAL '2 DAYS', NOW() - INTERVAL '2 DAYS'),
+    (1, 2, 1, 'DELIVERED', NOW() - INTERVAL '3 DAYS', NOW() - INTERVAL '3 DAYS'),
+
+    (2, 1, NULL, 'PENDING', NOW() - INTERVAL '4 DAYS', NOW() - INTERVAL '4 DAYS'),
+    (3, 2, 2, 'DELIVERED', NOW() - INTERVAL '5 DAYS', NOW() - INTERVAL '5 DAYS'),
+    (1, 1, 2, 'ASSIGNED', NOW() - INTERVAL '6 DAYS', NOW() - INTERVAL '6 DAYS'),
+    (2, 2, 1, 'CANCELLED', NOW() - INTERVAL '7 DAYS', NOW() - INTERVAL '7 DAYS'),
+    (3, 1, 1, 'DELIVERED', NOW() - INTERVAL '1 DAY', NOW() - INTERVAL '1 DAY'),
+
+    (1, 2, NULL, 'PENDING', NOW() - INTERVAL '2 DAYS', NOW() - INTERVAL '2 DAYS'),
+    (2, 1, 2, 'DELIVERED', NOW() - INTERVAL '3 DAYS', NOW() - INTERVAL '3 DAYS'),
+    (3, 2, 1, 'ASSIGNED', NOW() - INTERVAL '4 DAYS', NOW() - INTERVAL '4 DAYS'),
+    (1, 1, 1, 'DELIVERED', NOW() - INTERVAL '5 DAYS', NOW() - INTERVAL '5 DAYS'),
+    (2, 2, NULL, 'PENDING', NOW() - INTERVAL '6 DAYS', NOW() - INTERVAL '6 DAYS'),
+
+    (3, 1, 2, 'ASSIGNED', NOW() - INTERVAL '7 DAYS', NOW() - INTERVAL '7 DAYS'),
+    (1, 2, 1, 'DELIVERED', NOW() - INTERVAL '1 DAY', NOW() - INTERVAL '1 DAY'),
+    (2, 1, 2, 'PENDING', NOW() - INTERVAL '2 DAYS', NOW() - INTERVAL '2 DAYS'),
+    (3, 2, 1, 'CANCELLED', NOW() - INTERVAL '3 DAYS', NOW() - INTERVAL '3 DAYS'),
+    (1, 1, NULL, 'PENDING', NOW() - INTERVAL '4 DAYS', NOW() - INTERVAL '4 DAYS'),
+
+    (2, 2, 2, 'DELIVERED', NOW() - INTERVAL '5 DAYS', NOW() - INTERVAL '5 DAYS'),
+    (3, 1, 1, 'ASSIGNED', NOW() - INTERVAL '6 DAYS', NOW() - INTERVAL '6 DAYS'),
+    (1, 2, 2, 'PENDING', NOW() - INTERVAL '7 DAYS', NOW() - INTERVAL '7 DAYS'),
+    (2, 1, NULL, 'CANCELLED', NOW() - INTERVAL '1 DAY', NOW() - INTERVAL '1 DAY'),
+    (3, 2, 1, 'DELIVERED', NOW() - INTERVAL '2 DAYS', NOW() - INTERVAL '2 DAYS'),
+
+    (1, 1, 1, 'PENDING', NOW() - INTERVAL '3 DAYS', NOW() - INTERVAL '3 DAYS'),
+    (2, 2, NULL, 'ASSIGNED', NOW() - INTERVAL '4 DAYS', NOW() - INTERVAL '4 DAYS'),
+    (3, 1, 2, 'DELIVERED', NOW() - INTERVAL '5 DAYS', NOW() - INTERVAL '5 DAYS'),
+    (1, 2, 1, 'CANCELLED', NOW() - INTERVAL '6 DAYS', NOW() - INTERVAL '6 DAYS'),
+    (2, 1, 2, 'DELIVERED', NOW() - INTERVAL '7 DAYS', NOW() - INTERVAL '7 DAYS'),
+
+    (3, 2, NULL, 'PENDING', NOW() - INTERVAL '1 DAY', NOW() - INTERVAL '1 DAY'),
+    (1, 1, 2, 'DELIVERED', NOW() - INTERVAL '2 DAYS', NOW() - INTERVAL '2 DAYS'),
+    (2, 2, 1, 'ASSIGNED', NOW() - INTERVAL '3 DAYS', NOW() - INTERVAL '3 DAYS'),
+    (3, 1, NULL, 'PENDING', NOW() - INTERVAL '4 DAYS', NOW() - INTERVAL '4 DAYS'),
+    (1, 2, 2, 'DELIVERED', NOW() - INTERVAL '5 DAYS', NOW() - INTERVAL '5 DAYS'),
+
+    (2, 1, 1, 'ASSIGNED', NOW() - INTERVAL '6 DAYS', NOW() - INTERVAL '6 DAYS'),
+    (3, 2, 2, 'CANCELLED', NOW() - INTERVAL '7 DAYS', NOW() - INTERVAL '7 DAYS'),
+    (1, 1, 1, 'DELIVERED', NOW() - INTERVAL '1 DAY', NOW() - INTERVAL '1 DAY'),
+    (2, 2, 2, 'PENDING', NOW() - INTERVAL '2 DAYS', NOW() - INTERVAL '2 DAYS'),
+    (3, 1, NULL, 'ASSIGNED', NOW() - INTERVAL '3 DAYS', NOW() - INTERVAL '3 DAYS');
+
