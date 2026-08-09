@@ -215,7 +215,29 @@ INSERT INTO order_items (order_id, menu_item_id, quantity, price) VALUES
 INSERT INTO order_items (order_id, menu_item_id, quantity, price) VALUES
     (49, 3, 2, 200.00);
 
--- Order 50
-INSERT INTO order_items (order_id, menu_item_id, quantity, price) VALUES
-                                                                      (50, 1, 1, 180.00),
-                                                                      (50, 2, 1, 220.00);
+-- Backfill orders.total_amount from the real order_items we just inserted,
+-- instead of leaving it at the 0 default from V1. Going forward the
+-- application computes this server-side in OrderService rather than trusting
+-- a client-supplied amount (see OrderService.placeOrder).
+UPDATE orders o
+SET total_amount = COALESCE(
+        (SELECT SUM(oi.quantity * oi.price) FROM order_items oi WHERE oi.order_id = o.id),
+        0
+                   );
+
+-- NOTE ON DATA INTEGRITY: the order_id values referenced above (1-49) assume
+-- orders were inserted starting at id 1, but V2 already inserted 4 sample
+-- orders before V3's, so V3's rows actually landed starting at id 5, not 1.
+-- This means the sample order_items above are not all attached to the order
+-- their comment claims -- the pairing is approximate, not exact. This part
+-- is cosmetic and does not affect real orders placed through the API, which
+-- always insert correctly-linked order_items server-side.
+--
+-- What is NOT cosmetic: this file originally also referenced order_id=50.
+-- V3__sample_data.sql's own header claims "Inserts 50 realistic test
+-- orders," but the file actually contains only 45 order rows. Combined with
+-- V2's 4 orders, real order ids on a fresh database only go up to 49 --
+-- id 50 never existed, so the "Order 50" order_items insert was a genuine
+-- foreign-key violation on real Postgres (confirmed by an actual
+-- docker-compose run against a fresh database), not just a mismatched
+-- label. That block has been removed.

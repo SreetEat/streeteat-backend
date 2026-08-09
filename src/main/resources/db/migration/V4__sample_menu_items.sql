@@ -1,7 +1,21 @@
 -- ================================================
 -- V4__sample_menu_items.sql
--- Inserts sample menu items for vendors
+-- Creates menu_items table (previously missing -- this file inserted into
+-- it without ever creating it, which would fail on a fresh database) and
+-- inserts sample menu items for vendors.
 -- ================================================
+
+CREATE TABLE IF NOT EXISTS menu_items (
+    id BIGSERIAL PRIMARY KEY,
+    vendor_id BIGINT NOT NULL REFERENCES vendors(id) ON DELETE CASCADE,
+    name VARCHAR(120) NOT NULL,
+    price NUMERIC(10,2) NOT NULL,
+    available BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_menu_items_vendor ON menu_items(vendor_id);
 
 INSERT INTO menu_items (vendor_id, name, price, available) VALUES
 -- Vendor 1: Spicy Bites

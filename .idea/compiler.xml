@@ -9,6 +9,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="streeteats-api" />
         <module name="streeteat" />
+      </profile>
+      <profile name="Annotation profile for StreetEats API" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
         <module name="streeteat-api" />
       </profile>
     </annotationProcessing>

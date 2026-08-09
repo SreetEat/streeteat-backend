@@ -1,7 +1,20 @@
 -- ================================================
 -- V5__sample_reviews.sql
--- Inserts sample reviews for delivered orders
+-- Creates reviews table (previously missing) and inserts sample reviews
+-- for delivered orders.
 -- ================================================
+
+CREATE TABLE IF NOT EXISTS reviews (
+                                       id BIGSERIAL PRIMARY KEY,
+                                       order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    vendor_id BIGINT NOT NULL REFERENCES vendors(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+CREATE INDEX IF NOT EXISTS idx_reviews_vendor ON reviews(vendor_id);
 
 INSERT INTO reviews (order_id, user_id, vendor_id, rating, comment, created_at)
 VALUES
@@ -14,4 +27,3 @@ VALUES
     (27, 2, 2, 2, 'Late delivery, food was cold.', NOW() - INTERVAL '7 DAYS'),
     (33, 3, 1, 5, 'Loved the flavors!', NOW() - INTERVAL '5 DAYS'),
     (41, 1, 1, 4, 'Will order again.', NOW() - INTERVAL '1 DAY');
-

@@ -1,7 +1,19 @@
 -- ================================================
 -- V6__sample_payments.sql
--- Inserts sample payments for delivered orders
+-- Creates payments table (previously missing) and inserts sample payments
+-- for delivered orders.
 -- ================================================
+
+CREATE TABLE IF NOT EXISTS payments (
+    id BIGSERIAL PRIMARY KEY,
+    order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    amount NUMERIC(10,2) NOT NULL,
+    method VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_payments_order ON payments(order_id);
 
 INSERT INTO payments (order_id, amount, method, status, created_at)
 VALUES

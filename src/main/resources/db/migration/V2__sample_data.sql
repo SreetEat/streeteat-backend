@@ -12,10 +12,15 @@ VALUES
     ('Admin User', 'admin@example.com', 'ADMIN', 'adminpass');
 
 -- Insert sample vendors
-INSERT INTO vendors (name, address, phone)
+-- NOTE: vendors.email is NOT NULL + UNIQUE per V1__init.sql. This insert
+-- previously omitted it entirely, which only fails once Flyway actually
+-- applies this script against a real (empty) Postgres database -- it was
+-- invisible under the H2 test profile because Flyway is disabled there and
+-- Hibernate's ddl-auto=update never runs this file at all.
+INSERT INTO vendors (name, address, phone, email)
 VALUES
-    ('Tasty Bites', '123 Main Street, Cityville', '9876543210'),
-    ('Street Treats', '45 Market Road, Townsville', '9123456780');
+    ('Tasty Bites', '123 Main Street, Cityville', '9876543210', 'tastybites@streeteat.example.com'),
+    ('Street Treats', '45 Market Road, Townsville', '9123456780', 'streettreats@streeteat.example.com');
 
 -- Insert sample delivery partners
 INSERT INTO delivery_partners (name, phone, vehicle_number)

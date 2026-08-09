@@ -38,25 +38,37 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/actuator/health"
+                                "/actuator/health",
+                                "/actuator/info",
+                                "/api/delivery/health",
+                                "/error"
+                        ).permitAll()
+
+                        // -------- PUBLIC BROWSING (customer discovery) --------
+                        // Nearby-vendor search and menu browsing must be readable without login.
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/api/vendors", "/api/vendors/nearby", "/api/vendors/{id}",
+                                "/api/vendors/*/menu", "/api/vendors/*/reviews",
+                                "/api/delivery/partners", "/api/delivery/partners/{id}"
                         ).permitAll()
 
                         // -------- ADMIN --------
                         .requestMatchers("/api/admin/**")
                         .hasRole("ADMIN")
 
-                        // -------- VENDOR --------
+                        // -------- VENDOR (mutating vendor/menu endpoints) --------
                         .requestMatchers(
-                                "/api/vendor/**",
-                                "/api/menu/**",
+                                "/api/vendors/**",
                                 "/api/orders/vendor/**"
-                        ).hasRole("VENDOR")
+                        ).hasAnyRole("VENDOR", "ADMIN")
 
                         // -------- CUSTOMER / ORDER --------
                         .requestMatchers("/api/orders/**")
                         .hasAnyRole("CUSTOMER", "VENDOR", "ADMIN")
 
                         // -------- DELIVERY PARTNER --------
+                        // Role.DELIVERY_PARTNER now matches this matcher (previously the Role
+                        // enum only had DELIVERY, so this check always failed for real users).
                         .requestMatchers("/api/delivery/**")
                         .hasAnyRole("DELIVERY_PARTNER", "ADMIN")
 
@@ -76,8 +88,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

@@ -42,16 +42,13 @@ CREATE TABLE orders (
                         vendor_id BIGINT NOT NULL REFERENCES vendors(id) ON DELETE CASCADE,
                         delivery_partner_id BIGINT REFERENCES delivery_partners(id) ON DELETE SET NULL,
                         status VARCHAR(50) NOT NULL, -- PENDING, ACCEPTED, ASSIGNED, DELIVERED, CANCELLED
-                        total_amount DECIMAL(10,2) NOT NULL,
+                        total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Order Items table
-CREATE TABLE order_items (
-                             id BIGSERIAL PRIMARY KEY,
-                             order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-                             item_name VARCHAR(100) NOT NULL,
-                             quantity INT NOT NULL,
-                             price DECIMAL(10,2) NOT NULL
-);
+-- NOTE: order_items is intentionally NOT created here. It used to be created
+-- both here (with an item_name-based schema) AND in V7 (with a proper
+-- menu_item_id-linked schema) -- CREATE TABLE without IF NOT EXISTS on an
+-- already-existing table always fails, so V7 would have hard-errored on any
+-- fresh database. V7 is now the sole, authoritative creator of order_items.

@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.streeteat.streeteat.model.User; // existing User entity in your project
+import com.streeteat.streeteat.model.User;
+import com.streeteat.streeteat.vendor.model.Vendor;
 
 @Entity
 @Table(name = "orders")
@@ -19,20 +22,31 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // link to your existing User entity
+    // Column name matches the DB migration (users are referenced via user_id there,
+    // the entity previously said "customer_id" which is a schema mismatch).
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User customer;
 
-    // vendor is not implemented as an entity yet; keep vendorId to reference vendor later
-    @Column(name = "vendor_id", nullable = false)
-    private Long vendorId;
+    // Real FK relation instead of a bare, unvalidated Long.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id", nullable = false)
+    private Vendor vendor;
 
-    // simple representation of ordered items (use JSON or a join table in future)
-    @Column(columnDefinition = "text")
-    private String items; // e.g. JSON string or comma separated list
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_partner_id")
+    private com.streeteat.streeteat.delivery.model.DeliveryPartner deliveryPartner;
 
-    @Column(precision = 12, scale = 2)
+    // Real line items instead of a free-text "items" string. Each OrderItem
+    // snapshots the menu item's price at order time, and totalAmount is the
+    // sum of those snapshots -- computed server-side in OrderService, never
+    // trusted from the client (a client-supplied totalAmount was a genuine
+    // price-tampering vulnerability in the earlier version of this code).
+    @Builder.Default
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @Column(name = "total_amount", precision = 12, scale = 2, nullable = false)
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
@@ -50,5 +64,10 @@ public class Order {
     @PreUpdate
     public void preUpdate() {
         updatedAt = Instant.now();
+    }
+
+    public void addItem(OrderItem item) {
+        item.setOrder(this);
+        this.orderItems.add(item);
     }
 }

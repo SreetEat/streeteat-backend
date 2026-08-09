@@ -10,21 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }}" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,11 +31,64 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
+      # Runs the full suite: GeoUtilsTest (unit), OrderFlowIntegrationTest +
+      # StreetEatApplicationTests (H2, via @ActiveProfiles("test")), and
+      # PostgresFlywayIntegrationTest (real Postgres via Testcontainers,
+      # exercising the actual Flyway migrations and Hibernate schema
+      # validation -- the exact class of bug that shipped undetected before
+      # this test class existed).
       - name: Run tests
         run: mvn test
 
       - name: Build Docker image
         run: docker build -t streeteat-app -f docker/Dockerfile .
 
+      # Boots the full docker-compose stack (real Postgres + Flyway + the
+      # packaged jar, same as a real deploy) and asserts it actually stays
+      # up and answers a health check -- not just that `docker compose up`
+      # exited zero. `up -d` alone previously reported success even when the
+      # app container crash-looped seconds later (which happened repeatedly
+      # during manual verification of this same compose file this project
+      # went through), because "containers were created" and "the app is
+      # actually healthy" are different things.
+      #
+      # REQUIRED GITHUB REPO SECRETS (Settings -> Secrets and variables ->
+      # Actions) for this step to run at all:
+      #   CI_JWT_SECRET       -- any random 32+ byte string, CI-only, must
+      #                          NOT be the same value used in any real
+      #                          environment.
+      #   CI_POSTGRES_PASSWORD -- any password, CI-only.
+      # Without these, this step fails fast and clearly (docker-compose.yml
+      # itself requires them via ${VAR:?...}) rather than silently using an
+      # empty/default value.
       - name: Docker Compose up (integration check)
-        run: docker-compose -f docker/docker-compose.yml up -d --build
+        working-directory: docker
+        env:
+          JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+          POSTGRES_USER: streeteat_ci
+          POSTGRES_PASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD }}
+          POSTGRES_DB: streeteat_ci_db
+        run: |
+          docker compose up -d --build
+          echo "Waiting for the app to report healthy..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+              echo "App is healthy."
+              exit 0
+            fi
+            echo "Not healthy yet (attempt $i/30)..."
+            sleep 2
+          done
+          echo "App did not become healthy in time. Container logs:"
+          docker compose logs
+          exit 1
+
+      # Always tears the stack down, even if the health check above failed,
+      # so a failed run doesn't leave containers/volumes behind on
+      # self-hosted runners and so the next run starts from a clean slate --
+      # the same "down -v" discipline used throughout manual verification of
+      # this compose file.
+      - name: Docker Compose down
+        if: always()
+        working-directory: docker
+        run: docker compose down -v

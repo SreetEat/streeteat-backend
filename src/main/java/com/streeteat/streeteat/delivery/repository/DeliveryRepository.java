@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     List<Delivery> findByDeliveryPartnerId(Long partnerId);
+    java.util.Optional<Delivery> findByOrderId(Long orderId);
 }
