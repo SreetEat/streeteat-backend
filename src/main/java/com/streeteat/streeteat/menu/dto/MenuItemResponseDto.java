@@ -15,4 +15,5 @@ public class MenuItemResponseDto {
     private String name;
     private BigDecimal price;
     private boolean available;
+    private String imageUrl;
 }

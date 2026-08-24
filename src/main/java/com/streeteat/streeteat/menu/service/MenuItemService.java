@@ -32,6 +32,7 @@ public class MenuItemService {
                 .name(request.getName())
                 .price(request.getPrice())
                 .available(request.getAvailable() == null || request.getAvailable())
+                .imageUrl(request.getImageUrl())
                 .build();
 
         return toResponse(menuItemRepository.save(item));
@@ -54,6 +55,9 @@ public class MenuItemService {
         item.setPrice(request.getPrice());
         if (request.getAvailable() != null) {
             item.setAvailable(request.getAvailable());
+        }
+        if (request.getImageUrl() != null) {
+            item.setImageUrl(request.getImageUrl());
         }
         return toResponse(menuItemRepository.save(item));
     }
@@ -92,6 +96,7 @@ public class MenuItemService {
                 .name(item.getName())
                 .price(item.getPrice())
                 .available(item.isAvailable())
+                .imageUrl(item.getImageUrl())
                 .build();
     }
 }

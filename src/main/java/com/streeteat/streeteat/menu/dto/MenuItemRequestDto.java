@@ -21,4 +21,8 @@ public class MenuItemRequestDto {
     private BigDecimal price;
 
     private Boolean available;
+
+    // Optional. A normal URL or a base64 data URI -- see the entity/migration
+    // comments for why this isn't proper object storage yet.
+    private String imageUrl;
 }

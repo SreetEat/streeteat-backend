@@ -27,6 +27,12 @@ public class MenuItem {
     @Column(nullable = false, length = 120)
     private String name;
 
+    // TEXT, not VARCHAR: may hold a base64 data URI (no object storage
+    // wired up yet -- see V12__menu_item_image.sql for the honest caveat
+    // on this being an MVP choice, not the long-term design).
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private String imageUrl;
+
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal price;
 
