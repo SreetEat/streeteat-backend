@@ -51,4 +51,4 @@ INSERT INTO menu_items (vendor_id, name, price, available)
 SELECT v.id, 'Test Samosa', 20.00, true FROM vendors v WHERE v.email = 'vendor@test.com';
 
 INSERT INTO menu_items (vendor_id, name, price, available)
-SELECT v.id, 'Test Chai', 15.00, true FROM vendors v WHERE v.email = 'vendor@test.com'\
+SELECT v.id, 'Test Chai', 15.00, true FROM vendors v WHERE v.email = 'vendor@test.com';
